@@ -2,6 +2,7 @@
 
 #include <cctype>
 #include <sstream>
+#include <string.h>
 
 namespace miniplc0 {
 
