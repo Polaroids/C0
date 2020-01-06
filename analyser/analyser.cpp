@@ -691,7 +691,26 @@ namespace miniplc0 {
 		{
 			return err;
 		}
-		TokenType tokentype = symbols[index].type;
+
+		int tableIndex = -1;
+		for (int i = symbols.size() - 1; i >= 0; i--)
+		{
+			if (token.GetValueString() == symbols[i].name && symbols[i].func == functions.at(functions.size() - 1).name) {
+				tableIndex = i;
+				break;
+			}
+		}
+		if (tableIndex == -1)
+		{
+			for (int i = 0; i < symbols.size(); i++)
+			{
+				if (token.GetValueString() == symbols[i].name && symbols[i].func == "") {
+					tableIndex = i;
+					break;
+				}
+			}
+		}
+		TokenType tokentype = symbols[tableIndex].type;
 		if (exprType == INT && tokentype == CHAR)
 		{
 			crtInstructions.emplace_back("i2c");
@@ -1111,9 +1130,28 @@ namespace miniplc0 {
 				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotDeclared);
 			}
 			int index = getIndex(token.GetValueString());
+			
 			if (type == VOID)
 			{
-				type = symbols[index].type;
+				int tableIndex = -1;
+				for (int i = symbols.size() - 1; i >= 0; i--)
+				{
+					if (token.GetValueString() == symbols[i].name && symbols[i].func == functions.at(functions.size() - 1).name) {
+						tableIndex = i;
+						break;
+					}
+				}
+				if (tableIndex == -1)
+				{
+					for (int i = 0; i < symbols.size(); i++)
+					{
+						if (token.GetValueString() == symbols[i].name && symbols[i].func == "") {
+							tableIndex = i;
+							break;
+						}
+					}
+				}
+				type = symbols[tableIndex].type;
 			}
 			if (isDeclaredLocal(token.GetValueString()))
 			{
